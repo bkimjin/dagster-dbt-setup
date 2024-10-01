@@ -1,0 +1,34 @@
+config:
+  send_anonymous_usage_stats: False
+ndr:
+  outputs:
+    prod:
+      type: snowflake
+      account: ndr.us-east-1
+      user: SVC_DBT
+      role: SVC_DBT_ROLE
+
+      private_key_path: "{{ env_var('DBT_ENV_SECRET_PRIVATE_KEY_PATH', 'update_secret') }}"
+      private_key_passphrase: "{{ env_var('DBT_ENV_SECRET_PRIVATE_KEY_PASSPHRASE', 'update_secret') }}"
+
+      database: NDR_PROD
+      schema: CORE
+      warehouse: "{{ env_var('DBT_WH', 'default_wh') }}"
+      threads: 4
+      query_tag: DAGSTER_PROD
+
+    dev:
+      type: snowflake
+      account: ndr.us-east-1
+      user: "{{ env_var('DBT_USER', 'update_user') }}"
+      role: "{{ env_var('DBT_ROLE', 'update_role') }}"
+
+      authenticator: externalbrowser
+
+      database: NDR_DEV
+      schema: "{{ env_var('DBT_SCHEMA', 'update_schema') }}"
+      warehouse: "{{ env_var('DBT_WH', 'default_wh') }}"
+      threads: 4
+      query_tag: DAGSTER_DEV
+
+  target: "{{ env_var('DBT_TARGET', 'prod') }}"
